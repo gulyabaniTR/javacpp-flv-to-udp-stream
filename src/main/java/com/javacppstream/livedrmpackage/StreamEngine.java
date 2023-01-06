@@ -14,8 +14,8 @@ public class StreamEngine {
     String outputRtspUri;
 
     public StreamEngine() {
-        this.inputPath = "C:/xampp/htdocs/javacpptest/out.flv";
-        this.outputRtspUri = "udp://@localhost:1002";
+        this.inputPath = "C:/xampp/htdocs/javacpptest/sample.flv";
+        this.outputRtspUri = "rtmp://91.151.88.151/live/stream";
     }
 
     public void run() {
@@ -47,7 +47,7 @@ public class StreamEngine {
 
         AVFormatContext octx = new AVFormatContext(null);
 
-        if ((ret = avformat_alloc_output_context2(octx, null, "mpegts", outputRtspUri)) < 0) {
+        if ((ret = avformat_alloc_output_context2(octx, null, "flv", outputRtspUri)) < 0) {
             System.out.println("Could not create output context");
             return;
         }
@@ -100,16 +100,18 @@ public class StreamEngine {
             octx.pb(pb);
         }
         AVDictionary avOutDict = new AVDictionary(null);
-        av_dict_set(avOutDict, "codec", "copy", 0);
-        // av_dict_set(avOutDict,"map","0",0);
-        // av_dict_set(avOutDict, "c:v", "libx264", 0);
-        // av_dict_set(avOutDict, "c:a", "aac", 0);
-        av_dict_set(avOutDict, "b:v", "3M", 0);
-        av_dict_set(avOutDict, "g", "25", 0);
-        av_dict_set(avOutDict, "keyint_min", "25", 0);
-        av_dict_set(avOutDict, "maxrate", "3M", 0);
-        av_dict_set(avOutDict, "bufsize", "3M", 0);
-        av_dict_set(avOutDict, "f", "mpegts", 0);
+        av_dict_set(avOutDict, "-ar", "44100", 0);
+        av_dict_set(avOutDict, "-ac", "1", 0);
+//        av_dict_set(avOutDict, "codec", "copy", 0);
+//        // av_dict_set(avOutDict,"map","0",0);
+//        // av_dict_set(avOutDict, "c:v", "libx264", 0);
+//        // av_dict_set(avOutDict, "c:a", "aac", 0);
+//        av_dict_set(avOutDict, "b:v", "3M", 0);
+//        av_dict_set(avOutDict, "g", "25", 0);
+//        av_dict_set(avOutDict, "keyint_min", "25", 0);
+//        av_dict_set(avOutDict, "maxrate", "3M", 0);
+//        av_dict_set(avOutDict, "bufsize", "3M", 0);
+        av_dict_set(avOutDict, "f", "flv", 0);
 
         ret = avformat_write_header(octx, avOutDict);
         if (ret < 0) {
